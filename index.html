@@ -518,20 +518,36 @@
 
   <!-- スクリプト -->
   <script>
-    // フォーム送信制御用のフラグ
-    let submitted = false;
+    // --- フォーム送信制御（エラーが起きないよう完全に分離） ---
+    let isSubmitted = false;
+    const formEl = document.getElementById('rsvpForm');
+    const iframeEl = document.getElementById('hidden_iframe');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
 
-    // 送信完了時にフォームを隠してメッセージを出す処理
-    function showSuccess() {
-      document.getElementById('rsvpForm').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
-      
-      // 送信直後に一番下までスクロールさせる（メッセージを見せるため）
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
+    // 送信ボタンが押された時の処理
+    formEl.addEventListener('submit', function() {
+      isSubmitted = true;
+      submitBtn.innerText = '送信中...';
+      submitBtn.disabled = true;
+    });
+
+    // データがGoogleへ送られ、隠しiframeがロード完了した時の処理
+    iframeEl.addEventListener('load', function() {
+      if (isSubmitted) {
+        // フォームを非表示にして、完了メッセージを表示
+        formEl.style.display = 'none';
+        successMsg.style.display = 'block';
+        
+        // メッセージ部分へスクロール
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth'
+        });
+        
+        isSubmitted = false; // フラグをリセット
+      }
+    });
 
     // 送信ボタンを押した瞬間の処理（連打防止）
     document.getElementById('rsvpForm').addEventListener('submit', function() {
