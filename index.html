@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding After Party</title>
+  <!-- エレガントな明朝体フォントを読み込み -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 全体の設定 */
+    :root {
+      --bg-color: #fffcf8; /* 温かみのあるアイボリー */
+      --text-color: #5a4b41; /* 柔らかいブラウン */
+      --accent-color: #d99c71; /* 華やかなピンクゴールド */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Serif JP', serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.8;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ローディング画面 */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-color);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(217, 156, 113, 0.2);
+      border-top-color: var(--accent-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* トップ画面（ヒーローセクション） */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      /* 背景の白ベールを少し濃くして文字を読みやすく調整 */
+      background: linear-gradient(rgba(255,252,248,0.6), rgba(255,252,248,0.9)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--text-color); /* ブラウンに変更して視認性アップ */
+      letter-spacing: 0.15em;
+      margin-bottom: 10px;
+      font-weight: 400;
+      text-shadow: 0 2px 10px rgba(255,255,255,1); /* 白いシャドウで文字を浮かせる */
+    }
+    .hero h1 .accent {
+      color: var(--accent-color); /* Weddingだけピンクゴールドに */
+    }
+    .hero p {
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      margin-top: 20px;
+      font-weight: bold;
+      color: var(--text-color);
+      text-shadow: 0 2px 5px rgba(255,255,255,1);
+    }
+    .scroll-down {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-color);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+      40% { transform: translateY(-20px) translateX(-50%); }
+      60% { transform: translateY(-10px) translateX(-50%); }
+    }
+
+    /* セクション共通 */
+    section {
+      padding: 80px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    h2 {
+      color: var(--accent-color);
+      font-size: 2rem;
+      margin-bottom: 40px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h2::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background-color: var(--accent-color);
+      margin-top: 15px;
+    }
+
+    /* ご挨拶テキスト */
+    .greeting-text {
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+
+    /* 詳細情報ボックス */
+    .info-box {
+      background: #ffffff;
+      border: 1px solid rgba(217, 156, 113, 0.3);
+      padding: 40px 20px;
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(217, 156, 113, 0.1);
+    }
+    .info-item {
+      margin-bottom: 20px;
+      border-bottom: 1px dashed rgba(217, 156, 113, 0.3);
+      padding-bottom: 15px;
+    }
+    .info-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .info-label {
+      color: var(--accent-color);
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 5px;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+    }
+    .info-value {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* アクセス */
+    .access-link {
+      color: var(--accent-color);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-color);
+      padding-bottom: 2px;
+      transition: opacity 0.3s;
+      display: inline-block;
+      margin-top: 15px;
+    }
+    .access-link:hover {
+      opacity: 0.7;
+    }
+
+    /* オリジナルデザインのフォーム */
+    .form-section {
+      margin-top: 20px;
+      margin-bottom: 60px;
+    }
+    .custom-form {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(217, 156, 113, 0.1);
+      padding: 40px 30px;
+      box-sizing: border-box;
+      text-align: left;
+    }
+    .form-group {
+      margin-bottom: 30px;
+    }
+    .form-label {
+      display: block;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    .form-label .required {
+      color: #e74c3c;
+      font-size: 0.8rem;
+      margin-left: 5px;
+      vertical-align: super;
+    }
+    
+    /* テキスト入力欄 */
+    .form-input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(217, 156, 113, 0.4);
+      border-radius: 8px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: var(--text-color);
+      background-color: #faf8f5;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 8px rgba(217, 156, 113, 0.3);
+      background-color: #fff;
+    }
+    .form-input::placeholder {
+      color: #bfaea2;
+    }
+
+    /* ラジオボタン（出席・欠席） */
+    .radio-group {
+      display: flex;
+      gap: 20px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1.05rem;
+    }
+    .radio-input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(217, 156, 113, 0.5);
+      border-radius: 50%;
+      margin-right: 8px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .radio-input:checked {
+      border-color: var(--accent-color);
+    }
+    .radio-input:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+    }
+
+    /* 送信ボタン */
+    .submit-btn {
+      display: block;
+      width: 100%;
+      background-color: var(--accent-color);
+      color: #fff;
+      padding: 10px 0;
+      font-size: 1.1rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(217, 156, 113, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Noto Serif JP', serif;
+      margin-top: 20px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(217, 156, 113, 0.5);
+      background-color: #c98a5e;
+    }
+    .submit-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* 送信完了メッセージ */
+    .success-message {
+      display: none;
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 30px 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.8rem;
+      color: rgba(90, 75, 65, 0.6);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* スクロールアニメーション用クラス */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* パララックスセクション */
+    .parallax {
+      background-image: url('https://images.unsplash.com/photo-1510076857177-7470076d4098?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); /* 乾杯のイメージ画像 */
+      min-height: 35vh;
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: relative;
+      z-index: 1;
+      margin: 40px 0;
+    }
+    /* iOS Safari用のパララックス対策（固定しない） */
+    @supports (-webkit-touch-callout: none) {
+      .parallax {
+        background-attachment: scroll;
+      }
+    }
+
+    /* 華やかなパーティクル（紙吹雪/光）のアニメーション設定 */
+    #particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      top: -10vh;
+      background-color: var(--accent-color);
+      opacity: 0.6;
+      border-radius: 50%;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg) scale(0.5);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ローディング画面 -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--accent-color); letter-spacing: 0.1em;">Loading...</p>
+  </div>
+
+  <!-- キラキラ舞うアニメーションのコンテナを追加 -->
+  <div id="particles-container"></div>
+
+  <!-- トップ画面 -->
+  <div class="hero">
+    <h1><span class="accent">Wedding<br>After Party</span></h1>
+    <p>2026.05.23<br>Kenta & Mizuki</p>
+    <div class="scroll-down">Scroll</div>
+  </div>
+
+  <!-- ご挨拶 -->
+  <section class="fade-in">
+    <h2>Greeting</h2>
+    <p class="greeting-text">
+      5月23日（土）<br>結婚式 2次会のご案内
+    </p>
+    <p class="greeting-text">
+      披露宴のあとは 場所を移して<br>夜風が心地よいテラス席で<br>ささやかな2次会を開催いたします
+    </p>
+    <p class="greeting-text">
+      参加してくれる皆様と<br>ゆっくりお話しができるよう<br>特に親しい友人だけに<br>声をかけさせていただきました
+    </p>
+    <p class="greeting-text">
+      美味しいお酒とお料理を片手に<br>皆様とワイワイ楽しい時間を<br>過ごせたら嬉しいです！
+    </p>
+  </section>
+
+  <!-- パララックス画像 -->
+  <div class="parallax"></div>
+
+  <!-- 詳細情報 -->
+  <section class="fade-in">
+    <h2>Information</h2>
+    <div class="info-box">
+      <div class="info-item">
+        <span class="info-label">Date & Time</span>
+        <span class="info-value">2026年5月23日(土)<br>21:00 ～ 23:00 (受付20:45～)</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Place</span>
+        <span class="info-value">サルーテ本町<br><span style="font-size: 0.9rem; color: #888;">石川県金沢市本町2丁目4-30 金沢ビルラン5階</span></span>
+        <a href="https://salute-honmachi.com/" target="_blank" class="access-link">店舗の公式サイトを見る</a>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Fee</span>
+        <span class="info-value">7,000円（税込）</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Event</span>
+        <span class="info-value">豪華景品あり！ビンゴ大会</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- フォーム埋め込みセクション（自作デザイン） -->
+  <section class="fade-in form-section">
+    <h2>RSVP</h2>
+    <p style="margin-bottom: 30px; font-size: 0.95rem;">
+      人数確認のため、誠に恐縮ですが<br>
+      <span style="color: var(--accent-color);">4月18日(日)</span> までに<br>
+      下記より出欠のご回答をお願いいたします。
+    </p>
+
+    <!-- 
+      【重要設定】
+      action="ここにGoogleフォームのformResponse URLを入れる" 
+    -->
+    <form class="custom-form" id="rsvpForm" action="https://docs.google.com/forms/u/1/d/1PPZWDd4bQ8PqYFmbdv_GlGM2WAfCwHmzqp8YZ1CXpo8/previewResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+      
+      <!-- お名前 -->
+      <div class="form-group">
+        <label class="form-label">お名前<span class="required">*</span></label>
+        <!-- name="entry.XXXXXXX" を実際のGoogleフォームのIDに変更する -->
+        <input type="text" class="form-input" name="entry.559352220" placeholder="例：山田 太郎" required>
+      </div>
+
+      <!-- 出欠確認（ラジオボタン） -->
+      <div class="form-group">
+        <label class="form-label">2次会に出席されますか？<span class="required">*</span></label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <!-- name="entry.YYYYYYY" と value="実際の選択肢のテキスト" を設定する -->
+            <input type="radio" class="radio-input" name="entry.877086558_sentinel" value="出席する" required>
+            出席する
+          </label>
+          <label class="radio-label">
+            <input type="radio" class="radio-input" name="entry.877086558_sentinel" value="欠席する" required>
+            欠席する
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
+    </form>
+
+    <!-- 送信完了メッセージエリア -->
+    <div class="success-message" id="successMsg">
+      ご回答ありがとうございました。<br>送信が完了しました！
+    </div>
+
+    <!-- 画面遷移を防ぐための隠しiframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){showSuccess();}"></iframe>
+
+  </section>
+
+  <footer>
+    &copy; 2026 Taro & Hanako. All rights reserved.
+  </footer>
+
+  <!-- スクリプト -->
+  <script>
+    // フォーム送信制御用のフラグ
+    let submitted = false;
+
+    // 送信完了時にフォームを隠してメッセージを出す処理
+    function showSuccess() {
+      document.getElementById('rsvpForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+      
+      // 送信直後に一番下までスクロールさせる（メッセージを見せるため）
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    // 送信ボタンを押した瞬間の処理（連打防止）
+    document.getElementById('rsvpForm').addEventListener('submit', function() {
+      const btn = document.getElementById('submitBtn');
+      btn.innerText = '送信中...';
+      btn.disabled = true;
+    });
+
+    // ローディング画面の非表示処理
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('loader');
+      // 最低でも少しスピナーを見せるためのタイマー（500ms）
+      setTimeout(() => {
+        loader.classList.add('hidden');
+      }, 500);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Intersection Observerを使って要素が画面に入ったかを検知
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // 一度表示されたら監視を解除（スクロール戻してもそのまま）
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { 
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 // 要素が15%見えたら発火
+      });
+
+      // .fade-in クラスを持つすべての要素を監視対象にする
+      document.querySelectorAll('.fade-in').forEach(element => {
+        observer.observe(element);
+      });
+
+      // 華やかなパーティクル（花びら/光の粒）を生成する処理を追加
+      const particlesContainer = document.getElementById('particles-container');
+      const particleCount = 40; // 舞わせる数
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // ランダムな位置、サイズ、アニメーション時間を設定
+        const size = Math.random() * 10 + 5; // 5px 〜 15px
+        const posX = Math.random() * 100; // 0vw 〜 100vw
+        const delay = Math.random() * 5; // 0s 〜 5s の遅延
+        const duration = Math.random() * 10 + 10; // 10s 〜 20s かけて落ちる
+
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${posX}vw`;
+        particle.style.animationDelay = `${delay}s`;
+        particle.style.animationDuration = `${duration}s`;
+
+        // 形をランダムに（丸や、少し長細い花びら風に）
+        if (Math.random() > 0.5) {
+           particle.style.borderRadius = "50% 0 50% 0"; // 葉っぱ/花びら型
+           particle.style.backgroundColor = i % 3 === 0 ? "#ffffff" : "var(--accent-color)"; // 時々白い粒を混ぜる
+        }
+
+        particlesContainer.appendChild(particle);
+      }
+    });
+  </script>
+
+</body>
+</html>
