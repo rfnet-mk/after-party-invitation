@@ -550,13 +550,6 @@
       }
     });
 
-    // 送信ボタンを押した瞬間の処理（連打防止）
-    document.getElementById('rsvpForm').addEventListener('submit', function() {
-      const btn = document.getElementById('submitBtn');
-      btn.innerText = '送信中...';
-      btn.disabled = true;
-    });
-
     // ローディング画面の非表示処理
     window.addEventListener('load', function() {
       const loader = document.getElementById('loader');
